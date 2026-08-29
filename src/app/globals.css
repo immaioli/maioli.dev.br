@@ -10,14 +10,29 @@
   --color-theme-primary: var(--theme-primary);
   --color-theme-secondary: var(--theme-secondary);
   --color-theme-glow: var(--theme-primary-glow);
+
+  --animate-spin-slow: spin 4s linear infinite;
+  --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-glow-pulse: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 1px var(--theme-secondary), 0 0 20px var(--theme-secondary);
+    border-color: var(--theme-secondary);
+  }
+  50% {
+    box-shadow: 0 0 0 1px var(--theme-secondary), 0 0 40px var(--theme-secondary);
+    border-color: var(--theme-secondary);
+  }
 }
 
 @layer base {
   /* Default theme (universe) */
   :root {
-    --theme-primary: #ffffff;
-    --theme-secondary: #a3a3a3;
-    --theme-primary-glow: rgba(255, 255, 255, 0.15);
+    --theme-primary: #000000;
+    --theme-secondary: #ffffff;
+    --theme-primary-glow: rgba(0, 0, 0, 0.15);
   }
 
   html[data-theme="spider-man"] {
@@ -128,6 +143,12 @@
     --theme-primary-glow: rgba(200, 16, 46, 0.15);
   }
 
+  html[data-theme="doctor-doom"] {
+    --theme-primary: #006400;
+    --theme-secondary: #C0C0C0;
+    --theme-primary-glow: rgba(0, 100, 0, 0.15);
+  }
+
   body {
     background-color: var(--theme-primary);
     color: var(--color-foreground);
@@ -139,6 +160,31 @@
     -moz-osx-font-smoothing: grayscale;
     transition: background-image 0.5s ease, background-color 0.5s ease;
   }
+}
+
+/* Thanos ghost mode — element keeps border, content becomes transparent */
+.thanos-ghost {
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border-color: var(--theme-secondary) !important;
+  opacity: 0.35;
+}
+.thanos-ghost img,
+.thanos-ghost svg {
+  opacity: 0 !important;
+  transition: opacity 3s ease-in-out;
+}
+.thanos-ghost span,
+.thanos-ghost p,
+.thanos-ghost h1,
+.thanos-ghost h2,
+.thanos-ghost h3,
+.thanos-ghost h4,
+.thanos-ghost h5,
+.thanos-ghost h6 {
+  opacity: 0 !important;
+  transition: opacity 3s ease-in-out;
 }
 
 @layer utilities {
