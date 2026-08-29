@@ -1,5 +1,6 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { getProjectBySlug, getSortedProjects } from '../../../lib/projects';
+import { getAboutEntryBySlug, getSortedAboutEntries } from '../../../lib/about';
 import { getDictionary } from '../../../i18n/dictionaries';
 import { Locale } from '../../../i18n/config';
 import { notFound } from 'next/navigation';
@@ -12,7 +13,7 @@ type Props = {
   }>;
 };
 
-// Gera os caminhos estáticos no build-time
+// Generates static paths at build time for every project in every locale
 export async function generateStaticParams() {
   const locales = ['pt-BR', 'en-US', 'es-LA'];
   const params: { lang: string; slug: string }[] = [];
@@ -25,28 +26,34 @@ export async function generateStaticParams() {
         slug: project.slug,
       });
     }
+
+    for (const entry of getSortedAboutEntries(lang)) {
+      params.push({ lang, slug: entry.slug });
+    }
   }
 
   return params;
 }
 
-export default async function ProjectPage({ params }: Props) {
+export default async function ContentPage({ params }: Props) {
   const { lang, slug } = await params;
   const project = getProjectBySlug(slug, lang);
+  const aboutEntry = project ? null : getAboutEntryBySlug(slug, lang);
+  const entry = project ?? aboutEntry;
 
-  if (!project) {
+  if (!entry) {
     notFound();
   }
 
   const dict = await getDictionary(lang as Locale);
-  const { frontmatter, content } = project;
+  const { frontmatter, content } = entry;
 
   return (
     <div className="flex flex-col min-h-screen relative overflow-hidden pb-20">
       {/* Background glow base on active theme */}
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--theme-primary-glow)] rounded-full blur-[120px] -z-10 transition-colors duration-500 pointer-events-none"></div>
 
-      <header className="w-full flex items-center justify-between p-6 sm:px-12 relative z-50 border-b border-white/10 bg-[#09090b]/80 backdrop-blur-md sticky top-0">
+      <header className="fixed top-0 left-0 right-0 w-full flex items-center justify-between p-6 sm:px-12 z-50 border-b border-white/10 bg-[#09090b]/80 backdrop-blur-md">
         <Link
           href={`/${lang}`}
           className="text-gray-300 hover:text-white flex items-center gap-2 transition-colors duration-300"
@@ -58,13 +65,13 @@ export default async function ProjectPage({ params }: Props) {
         </Link>
       </header>
 
-      <main className="flex-1 flex flex-col items-center p-6 sm:p-12 relative z-10 w-full max-w-4xl mx-auto mt-8">
+      <main className="flex-1 flex flex-col items-center p-6 pt-28 sm:p-12 sm:pt-32 relative z-10 w-full max-w-4xl mx-auto">
         <div className="w-full glass-card p-8 md:p-12">
 
           <div className="mb-12 border-b border-white/10 pb-8">
             <div className="flex flex-wrap gap-2 mb-6">
               {frontmatter.tags.map(tag => (
-                <span key={tag} className="text-xs font-medium px-3 py-1 rounded-full border border-[var(--theme-primary)]/30 text-[var(--theme-secondary)] bg-[var(--theme-primary)]/10">
+                <span key={tag} className="text-xs font-medium px-3 py-1 rounded-full border border-[var(--theme-secondary)] text-[var(--theme-secondary)] bg-[var(--theme-primary)]/10">
                   {tag}
                 </span>
               ))}
@@ -79,9 +86,9 @@ export default async function ProjectPage({ params }: Props) {
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              {frontmatter.githubUrl && (
+              {project?.frontmatter.githubUrl && (
                 <a
-                  href={frontmatter.githubUrl}
+                  href={project.frontmatter.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-all duration-300 border border-white/5"
@@ -93,9 +100,9 @@ export default async function ProjectPage({ params }: Props) {
                 </a>
               )}
 
-              {frontmatter.productionUrl && (
+              {project?.frontmatter.productionUrl && (
                 <a
-                  href={frontmatter.productionUrl}
+                  href={project.frontmatter.productionUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--theme-primary)] hover:bg-[var(--theme-secondary)] text-white font-medium shadow-[0_0_15px_var(--theme-primary-glow)] transition-all duration-300"
