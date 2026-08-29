@@ -1,5 +1,7 @@
 <div align="center">
-  <h1>🪐 maioli.dev.br</h1>
+  <img src="public/logo-maioli.dev.svg" alt="maioli.dev logo" width="140" height="140" />
+
+  <h1>maioli.dev.br</h1>
 
   <p>
     <strong>Multilingual portfolio for the maioli.dev software company, with interactive Marvel-themed visuals and effects.</strong>
