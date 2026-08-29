@@ -34,7 +34,7 @@ yarn-error.log*
 .env*.local
 
 # local tooling config (per-user launch configs)
-/claude/launch.json
+/.claude/launch.json
 
 # vercel
 .vercel
