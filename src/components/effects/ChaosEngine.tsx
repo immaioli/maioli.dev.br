@@ -10,6 +10,7 @@ type MagneticOffset = {
   x: number;
   y: number;
   rotate: number;
+  scale: number;
   floatX: number;
   floatY: number;
   duration: number;
@@ -19,6 +20,7 @@ const RESTING_OFFSET: MagneticOffset = {
   x: 0,
   y: 0,
   rotate: 0,
+  scale: 1,
   floatX: 0,
   floatY: 0,
   duration: 4,
@@ -74,15 +76,17 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
       const vectorX = window.innerWidth / 2 - elementX;
       const vectorY = window.innerHeight / 2 - elementY;
       const distance = Math.hypot(vectorX, vectorY) || 1;
-      const magnitude = 8 + (seed % 17);
+      const magnitude = 35 + (seed % 40); // Increased repulsor force
       const rotation = ((seed >>> 8) % 801) / 100 - 4;
+      const scaleVal = 0.95 + ((seed >>> 12) % 15) / 100;
 
       setMagneticOffset({
         x: (vectorX / distance) * magnitude,
         y: (vectorY / distance) * magnitude,
         rotate: rotation,
-        floatX: 1.5 + ((seed >>> 16) % 25) / 10,
-        floatY: 1.5 + ((seed >>> 20) % 25) / 10,
+        scale: scaleVal,
+        floatX: 2.5 + ((seed >>> 16) % 35) / 10,
+        floatY: 2.5 + ((seed >>> 20) % 35) / 10,
         duration: 3 + ((seed >>> 12) % 20) / 10,
       });
     };
@@ -108,11 +112,13 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
           x: magnetoActive ? magneticOffset.x : 0,
           y: magnetoActive ? magneticOffset.y : 0,
           rotate: chaosState === 'loki' ? 180 : magnetoActive ? magneticOffset.rotate : 0,
+          scale: magnetoActive ? magneticOffset.scale : 1,
         }}
         transition={{
           opacity: { duration: 2.5, ease: [0.25, 0.1, 0.25, 1] },
           x: { duration: 0.9, ease: 'easeInOut' },
           y: { duration: 0.9, ease: 'easeInOut' },
+          scale: { duration: 0.9, ease: 'easeInOut' },
           rotate: chaosState === 'loki'
             ? { duration: 2.5, type: 'spring', bounce: 0.3 }
             : { duration: 0.9, ease: 'easeInOut' },

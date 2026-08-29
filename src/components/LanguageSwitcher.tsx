@@ -30,7 +30,7 @@ function LanguageFlag({ code, flagUrl, alt, isActive, href }: {
         href={href}
         className={`relative flex items-center justify-center overflow-hidden transition-all duration-300 w-9 h-6 sm:w-10 sm:h-[26px] ${
           isActive
-            ? 'rounded-md border-[3px] border-[var(--theme-primary)] shadow-[0_0_15px_var(--theme-primary-glow)] scale-110'
+            ? 'rounded-md border-[3px] border-[var(--theme-secondary)] shadow-[0_0_15px_var(--theme-primary-glow)] scale-110'
             : 'rounded-sm opacity-60 hover:opacity-100 hover:scale-105 drop-shadow-md border-[3px] border-transparent'
         }`}
         title={alt}

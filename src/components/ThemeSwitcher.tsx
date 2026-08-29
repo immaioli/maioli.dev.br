@@ -62,7 +62,7 @@ export default function ThemeSwitcher({ dict }: { dict: Dictionary }) {
       ChaosEventEmitter.emit('doctor-doom', detail);
     } else if (nextTheme === 'magneto') {
       ChaosEventEmitter.emit('magneto', detail);
-    } else if (nextTheme === 'universe') {
+    } else {
       ChaosEventEmitter.emit('universe');
     }
   };
