@@ -1,0 +1,56 @@
+---
+title: Crypto Analytics Platform
+excerpt: A platform created to turn scattered cryptocurrency market data into a simple experience for research and comparison.
+priority: 90
+date: 2026-08-24
+githubUrl: https://github.com/immaioli/crypto-analytics-monorepo
+tags:
+  - TypeScript
+  - NestJS
+  - Next.js
+  - React
+  - Redis
+  - WebSocket
+---
+
+# Crypto Analytics Platform
+
+Cryptocurrency information is available everywhere. The problem starts when different sources show different data, become temporarily unavailable, or simply stop responding.
+
+The **Crypto Analytics Platform** was born from that scenario.
+
+The idea was to build a platform capable of bringing information from different sources together and presenting it as one consistent experience for the user.
+
+## More than checking prices
+
+From the beginning, I did not want to build just another screen showing the price of Bitcoin.
+
+The goal was to explore a problem closer to the real world: **what happens when an application depends on external services that can fail?**
+
+The platform retrieves market information from different providers. If one source has a problem, the system can use other alternatives instead of simply becoming unavailable.
+
+For the user, all of that complexity should remain invisible.
+
+They should simply open the platform and find the information they need.
+
+## Designing for when things go wrong
+
+One of the core ideas behind this project was to work with the expectation that failures will happen.
+
+Services can become unavailable. A response can take too long. A data source can have an issue.
+
+Instead of treating these situations as unlikely exceptions, they became part of the solution itself.
+
+That change in perspective made this project especially interesting to me.
+
+Building something that works when everything is perfect is relatively simple. The bigger challenge is building something that remains useful when part of the environment stops working.
+
+## What this project represents
+
+This project represents an important step in the way I think about software development.
+
+Beyond implementing features, I started treating availability, failure recovery, and user experience as parts of the same problem.
+
+In the end, the user does not need to know how many services, strategies, or mechanisms exist behind the screen.
+
+They only need to trust that the application will keep working.

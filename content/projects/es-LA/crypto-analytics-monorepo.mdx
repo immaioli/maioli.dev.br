@@ -1,0 +1,56 @@
+---
+title: Crypto Analytics Platform
+excerpt: Una plataforma creada para transformar información dispersa del mercado de criptomonedas en una experiencia simple de consulta y comparación.
+priority: 90
+date: 2026-08-24
+githubUrl: https://github.com/immaioli/crypto-analytics-monorepo
+tags:
+  - TypeScript
+  - NestJS
+  - Next.js
+  - React
+  - Redis
+  - WebSocket
+---
+
+# Crypto Analytics Platform
+
+La información sobre criptomonedas está disponible en muchísimos lugares. El problema empieza cuando distintas fuentes muestran datos diferentes, quedan temporalmente fuera de servicio o simplemente dejan de responder.
+
+La **Crypto Analytics Platform** nació a partir de ese escenario.
+
+La propuesta fue construir una plataforma capaz de reunir información de distintas fuentes y presentarla al usuario como una experiencia única y consistente.
+
+## Más que consultar precios
+
+Desde el principio, no quería crear solamente otra pantalla que mostrara el precio de Bitcoin.
+
+El objetivo era explorar un problema más cercano al mundo real: **¿qué pasa cuando una aplicación depende de servicios externos que pueden fallar?**
+
+La plataforma consulta distintas fuentes de información sobre el mercado. Si una de ellas presenta problemas, el sistema puede recurrir a otras alternativas en lugar de simplemente dejar de funcionar.
+
+Para el usuario, toda esa complejidad debería permanecer invisible.
+
+Solo necesita entrar a la plataforma y encontrar la información que busca.
+
+## Diseñar pensando en que algo puede fallar
+
+Una de las ideas centrales del proyecto fue trabajar con la expectativa de que las fallas van a ocurrir.
+
+Un servicio puede quedar fuera de línea. Una respuesta puede tardar demasiado. Una fuente de datos puede presentar un problema.
+
+En lugar de tratar estas situaciones como excepciones poco probables, pasaron a formar parte del diseño de la solución.
+
+Ese cambio de perspectiva hizo que este proyecto fuera especialmente interesante para mí.
+
+Construir algo que funciona cuando todo está perfecto es relativamente simple. El desafío mayor es construir algo que siga siendo útil cuando una parte del entorno deja de funcionar.
+
+## Lo que representa este proyecto
+
+Este proyecto representa una evolución importante en mi forma de pensar el desarrollo de software.
+
+Más allá de implementar funcionalidades, empecé a tratar la disponibilidad, la recuperación ante fallas y la experiencia del usuario como partes del mismo problema.
+
+Al final, el usuario no necesita saber cuántos servicios, estrategias o mecanismos existen detrás de la pantalla.
+
+Solo necesita confiar en que la aplicación seguirá funcionando.

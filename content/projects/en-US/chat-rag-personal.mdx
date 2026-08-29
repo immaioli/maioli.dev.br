@@ -1,0 +1,93 @@
+---
+title: mAIo Assistant
+excerpt: A traditional résumé shows where I worked and which technologies I know. mAIo turns that information into an interactive experience where you can ask what you want to know.
+priority: 80
+date: 2026-08-13
+githubUrl: https://github.com/immaioli/chat-rag-personal
+productionUrl: https://maio.maioli.dev.br
+tags:
+  - Next.js
+  - TypeScript
+  - Node.js
+  - AI
+  - NLP
+  - RAG
+---
+
+# mAIo Assistant
+
+A traditional résumé is static.
+
+It lists experience, projects, and technologies, but it rarely shows how someone thinks, which problems they have solved, or how they made decisions throughout their career.
+
+For recruiters, there is another challenge: after reviewing dozens or even hundreds of résumés, they still need to understand whether what is written there reflects knowledge that has actually been applied in practice.
+
+That idea led to the **mAIo Assistant**: a way to turn my professional journey into an interactive experience.
+
+## A portfolio you can talk to
+
+Instead of forcing every visitor to browse the same pages and consume information in the same order, mAIo starts with a question.
+
+A recruiter may want to learn about my professional experience.
+
+A developer may be more interested in the projects I have built.
+
+Someone else may simply want to know which technologies I have worked with.
+
+The idea is to let each visitor explore my journey based on what they actually want to discover.
+
+The result is an experience somewhere between a résumé, a portfolio, and a conversation.
+
+## Why not simply start with AI?
+
+When I started the project, it would have been relatively easy to place an AI model behind a text box and allow any kind of question.
+
+But making an application like that publicly available would also mean accepting some problems from day one.
+
+Every conversation could generate costs. Answers could move outside the context of my portfolio. A large number of requests could consume unnecessary resources. And the availability of the application would depend on external services.
+
+So I decided to start in a different way.
+
+The first version of mAIo works with a controlled set of topics related to my professional journey. The system tries to understand what the person wants to know and presents a response prepared for that context.
+
+That makes the conversational experience possible without depending on generative AI for every interaction.
+
+## Simple first, intelligent when necessary
+
+That decision ended up defining one of the most important ideas behind the project:
+
+**not every question needs AI to be answered.**
+
+If someone asks about my professional experience, projects, or main skills, much of that information is already known.
+
+There is no reason to use a more expensive and unpredictable solution when a simpler approach can answer well.
+
+AI becomes more useful when the question requires interpretation, combination of information, or a response that was not previously anticipated.
+
+That is where the project can evolve into a hybrid experience.
+
+## Evolving without becoming dependent
+
+The evolution of mAIo includes allowing more open-ended questions and using the content from my own knowledge base to find relevant information before producing an answer.
+
+But there is an important difference: this layer should **expand the experience, not become an absolute dependency**.
+
+If an external service is unavailable, reaches a limit, or has a problem, the controlled part of mAIo can continue answering the questions it already understands.
+
+In other words, adding Artificial Intelligence should not mean making the application less reliable.
+
+## AI as part of the product
+
+mAIo started as a different way to present my résumé, but it also became an exercise in how I think about products that use Artificial Intelligence.
+
+For me, adding AI to a product does not simply mean connecting a model and sending every question to it.
+
+It means deciding **where AI really improves the experience and where a simpler solution is still the better choice**.
+
+That is probably the idea that best represents this project.
+
+mAIo was not created just to prove that it is possible to put a chatbot inside a portfolio.
+
+It was created to explore a different question:
+
+**what if, instead of just reading my résumé, you could talk to it?**
