@@ -11,7 +11,7 @@ export default function Footer({ contact }: { contact: Dictionary['contact'] }) 
       <div className="w-full max-w-6xl mx-auto px-6 py-12 flex flex-col items-center justify-center gap-6">
         <ThanosSnapTarget>
           <div className="flex flex-col items-center gap-5">
-            <h2 className="text-xl font-bold tracking-wide text-(--theme-primary) [text-shadow:0_1px_4px_rgba(255,255,255,0.55)]">
+            <h2 className="text-xl font-bold tracking-wide [color:color-mix(in_srgb,var(--theme-secondary)_15%,white)] [text-shadow:0_1px_2px_rgba(0,0,0,0.85),0_0_8px_var(--theme-secondary)]">
               {contact.title}
             </h2>
             <div className="flex flex-wrap justify-center gap-6">
