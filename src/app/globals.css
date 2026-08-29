@@ -1,0 +1,153 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-background: #09090b;
+  --color-foreground: #ededed;
+  --color-glass: rgba(255, 255, 255, 0.03);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+  /* The dynamic theme tokens available to tailwind */
+  --color-theme-primary: var(--theme-primary);
+  --color-theme-secondary: var(--theme-secondary);
+  --color-theme-glow: var(--theme-primary-glow);
+}
+
+@layer base {
+  /* Default theme (universe) */
+  :root {
+    --theme-primary: #ffffff;
+    --theme-secondary: #a3a3a3;
+    --theme-primary-glow: rgba(255, 255, 255, 0.15);
+  }
+
+  html[data-theme="spider-man"] {
+    --theme-primary: #DF1F2D;
+    --theme-secondary: #2B3784;
+    --theme-primary-glow: rgba(223, 31, 45, 0.15);
+  }
+
+  html[data-theme="iron-man"] {
+    --theme-primary: #B30000;
+    --theme-secondary: #FFD700;
+    --theme-primary-glow: rgba(179, 0, 0, 0.15);
+  }
+
+  html[data-theme="captain-america"] {
+    --theme-primary: #0A5CD6;
+    --theme-secondary: #E23636;
+    --theme-primary-glow: rgba(10, 92, 214, 0.15);
+  }
+
+  html[data-theme="thor"] {
+    --theme-primary: #C0C0C0;
+    --theme-secondary: #C8102E;
+    --theme-primary-glow: rgba(192, 192, 192, 0.10);
+  }
+
+  html[data-theme="hulk"] {
+    --theme-primary: #3FB950;
+    --theme-secondary: #702963;
+    --theme-primary-glow: rgba(63, 185, 80, 0.15);
+  }
+
+  html[data-theme="black-widow"] {
+    --theme-primary: #ED1C24;
+    --theme-secondary: #333333;
+    --theme-primary-glow: rgba(237, 28, 36, 0.15);
+  }
+
+  html[data-theme="black-panther"] {
+    --theme-primary: #8B5CF6;
+    --theme-secondary: #C0C0C0;
+    --theme-primary-glow: rgba(139, 92, 246, 0.10);
+  }
+
+  html[data-theme="doctor-strange"] {
+    --theme-primary: #8B0000;
+    --theme-secondary: #FFD700;
+    --theme-primary-glow: rgba(139, 0, 0, 0.15);
+  }
+
+  html[data-theme="captain-marvel"] {
+    --theme-primary: #C8102E;
+    --theme-secondary: #F1C400;
+    --theme-primary-glow: rgba(200, 16, 46, 0.15);
+  }
+
+  html[data-theme="scarlet-witch"] {
+    --theme-primary: #FF2400;
+    --theme-secondary: #8B0000;
+    --theme-primary-glow: rgba(255, 36, 0, 0.15);
+  }
+
+  html[data-theme="deadpool"] {
+    --theme-primary: #ED1C24;
+    --theme-secondary: #404040;
+    --theme-primary-glow: rgba(237, 28, 36, 0.15);
+  }
+
+  html[data-theme="daredevil"] {
+    --theme-primary: #8B0000;
+    --theme-secondary: #1a1a1a;
+    --theme-primary-glow: rgba(139, 0, 0, 0.15);
+  }
+
+  html[data-theme="x-men"] {
+    --theme-primary: #0033A0;
+    --theme-secondary: #FFD100;
+    --theme-primary-glow: rgba(0, 51, 160, 0.15);
+  }
+
+  html[data-theme="fantastic-four"] {
+    --theme-primary: #0055A4;
+    --theme-secondary: #FFFFFF;
+    --theme-primary-glow: rgba(0, 85, 164, 0.15);
+  }
+
+  html[data-theme="guardians"] {
+    --theme-primary: #FFD700;
+    --theme-secondary: #8B0000;
+    --theme-primary-glow: rgba(255, 215, 0, 0.10);
+  }
+
+  html[data-theme="thanos"] {
+    --theme-primary: #7B5CFF;
+    --theme-secondary: #FFD700;
+    --theme-primary-glow: rgba(123, 92, 255, 0.15);
+  }
+
+  html[data-theme="loki"] {
+    --theme-primary: #006400;
+    --theme-secondary: #FFD700;
+    --theme-primary-glow: rgba(0, 100, 0, 0.15);
+  }
+
+  html[data-theme="magneto"] {
+    --theme-primary: #C8102E;
+    --theme-secondary: #800080;
+    --theme-primary-glow: rgba(200, 16, 46, 0.15);
+  }
+
+  body {
+    background-color: var(--theme-primary);
+    color: var(--color-foreground);
+    /* Fundo sólido na cor do herói, com um degradê para preto nas bordas inferiores para dar profundidade */
+    background-image: radial-gradient(circle at 50% 0%, var(--theme-primary) 0%, #09090b 80%);
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-image 0.5s ease, background-color 0.5s ease;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: var(--color-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+}

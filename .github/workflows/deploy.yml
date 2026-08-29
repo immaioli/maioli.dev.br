@@ -1,0 +1,32 @@
+name: Deploy Next.js to cPanel
+
+on:
+  push:
+    branches:
+      - main # (or master)
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checking out code
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Setting up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: 📦 Installing dependencies
+      run: npm install
+
+    - name: 🏗️ Building static export
+      run: npm run build
+
+    - name: 🚀 Deploying to cPanel via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./out/ # Next.js with 'export' generates the final static files here
