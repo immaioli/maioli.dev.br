@@ -1,9 +1,10 @@
 name: Deploy Next.js to cPanel
 
+# DISABLED: deploy do cPanel desativado (migração p/ Vercel).
+# Só roda manualmente via workflow_dispatch — nunca em push.
+# Para reativar o deploy cPanel, restaure `push: branches: main`.
 on:
-  push:
-    branches:
-      - main # (or master)
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
