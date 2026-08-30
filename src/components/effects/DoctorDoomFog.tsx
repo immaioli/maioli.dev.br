@@ -158,9 +158,10 @@ function DoctorDoomFogInner({
   // During retraction, the fog's radial gradient inverts: instead of being
   // transparent at the center and dark at the edges, it becomes dark and
   // concentrated at the center, fading to nothing at the edges. This combined
-  // with the clipPath shrinking gives a clear "the fog is condensing back into
-  // the origin capsule" visual. The transform also scales the entire fog
-  // toward the origin point so the motion is unmistakable.
+  // with the clipPath shrinking and the entire fog scaling toward the origin
+  // point gives a clear "the fog is condensing back into the origin capsule"
+  // visual. framer-motion owns the transform (scale + transformOrigin) so it
+  // actually animates, while clipPath is interpolated on the same timeline.
   const isRetracting = effectivePhase === 'retracting' && !prefersReducedMotion;
   const fogBackground = isRetracting
     ? `radial-gradient(circle at ${geometry.x}px ${geometry.y}px, rgba(0,5,4,1) 0%, rgba(0,12,9,0.99) 28%, rgba(2,44,34,0.92) 58%, rgba(148,163,184,0.16) 88%, rgba(0,0,0,0) 100%)`
@@ -178,35 +179,36 @@ function DoctorDoomFogInner({
       }}
       initial={{
         clipPath: collapsedClip,
+        scale: prefersReducedMotion ? 1 : 0.12,
         opacity: prefersReducedMotion ? 0 : 1,
-        scale: 1,
       }}
       animate={{
         clipPath: effectivePhase === 'retracting' ? collapsedClip : expandedClip,
+        scale: effectivePhase === 'retracting' ? 0.12 : 1,
         opacity: effectivePhase === 'retracting' && prefersReducedMotion ? 0 : 1,
-        scale: effectivePhase === 'retracting' ? 0.3 : 1,
       }}
       exit={{
         clipPath: collapsedClip,
+        scale: 0.12,
         opacity: 0,
-        scale: 0.1,
       }}
       transition={{
         clipPath: {
           duration: (effectivePhase === 'retracting' ? retractDuration : expandDuration) / 1000,
           ease: 'easeInOut',
         },
-        opacity: { duration: REDUCED_MOTION_MS / 1000 },
         scale: {
           duration: (effectivePhase === 'retracting' ? retractDuration : expandDuration) / 1000,
           ease: 'easeInOut',
         },
+        opacity: { duration: REDUCED_MOTION_MS / 1000 },
       }}
     >
       <div
         className="absolute inset-0 backdrop-blur-[32px] backdrop-brightness-50"
         style={{
           background: fogBackground,
+          transformOrigin: `${geometry.x}px ${geometry.y}px`,
         }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(0,0,0,0.48)_0%,rgba(6,78,59,0.18)_42%,rgba(0,0,0,0.58)_100%)]" />
