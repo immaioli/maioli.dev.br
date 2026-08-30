@@ -158,7 +158,17 @@
     font-family: Arial, Helvetica, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    transition: background-image 0.5s ease, background-color 0.5s ease;
+    transition: background-color 0.5s ease;
+    /* Fade animation triggers on every theme switch. CSS background-image transitions
+     * between two radial-gradients are not consistently animated by browsers, so we
+     * fade opacity instead. This produces a smooth visual transition for both the
+     * entry and exit of any theme, including Doctor Doom. */
+    animation: theme-fade-in 0.5s ease-out;
+  }
+
+  @keyframes theme-fade-in {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
   }
 }
 

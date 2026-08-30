@@ -65,7 +65,12 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
   const [magneticOffset, setMagneticOffset] = useState<MagneticOffset>(RESTING_OFFSET);
 
   useEffect(() => {
-    if (chaosState !== 'magneto' || forceKeep || prefersReducedMotion) return;
+    if (chaosState !== 'magneto' || forceKeep) return;
+
+    // Magneto respects prefersReducedMotion by reducing intensity, not disabling entirely.
+    // Users with "reduce motion" enabled still see the effect, just at 30% of normal magnitude.
+    const reducedIntensity = prefersReducedMotion ? 0.3 : 1;
+    const reducedFloat = prefersReducedMotion ? 0.75 : 1;
 
     const updateMagneticOffset = () => {
       const rect = targetRef.current?.getBoundingClientRect();
@@ -76,8 +81,8 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
       const vectorX = window.innerWidth / 2 - elementX;
       const vectorY = window.innerHeight / 2 - elementY;
       const distance = Math.hypot(vectorX, vectorY) || 1;
-      const magnitude = 35 + (seed % 40); // Increased repulsor force
-      const rotation = ((seed >>> 8) % 801) / 100 - 4;
+      const magnitude = (35 + (seed % 40)) * reducedIntensity;
+      const rotation = (((seed >>> 8) % 801) / 100 - 4) * reducedIntensity;
       const scaleVal = 0.95 + ((seed >>> 12) % 15) / 100;
 
       setMagneticOffset({
@@ -85,8 +90,8 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
         y: (vectorY / distance) * magnitude,
         rotate: rotation,
         scale: scaleVal,
-        floatX: 2.5 + ((seed >>> 16) % 35) / 10,
-        floatY: 2.5 + ((seed >>> 20) % 35) / 10,
+        floatX: (2.5 + ((seed >>> 16) % 35) / 10) * reducedFloat,
+        floatY: (2.5 + ((seed >>> 20) % 35) / 10) * reducedFloat,
         duration: 3 + ((seed >>> 12) % 20) / 10,
       });
     };
@@ -96,7 +101,8 @@ export function ThanosSnapTarget({ children, forceKeep = false, invert = false }
     return () => window.removeEventListener('resize', updateMagneticOffset);
   }, [chaosState, forceKeep, prefersReducedMotion, seed]);
 
-  const magnetoActive = chaosState === 'magneto' && !forceKeep && !prefersReducedMotion;
+  // Magneto stays active even when prefersReducedMotion is true; intensity is reduced instead.
+  const magnetoActive = chaosState === 'magneto' && !forceKeep;
 
   return (
     <div
