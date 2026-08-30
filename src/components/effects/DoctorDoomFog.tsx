@@ -155,17 +155,16 @@ function DoctorDoomFogInner({
   const expandedClip = `circle(${geometry.radius}px at ${geometry.x}px ${geometry.y}px)`;
   const messageVisible = effectivePhase === 'counting';
 
-  // During retraction, the visual content scales down toward the origin point
-  // in addition to the clipPath shrinking. This makes the "return to origin"
-  // motion clearly perceptible (without the scale, the dark gradient collapsing
-  // into its transparent center looks like a plain fade out).
-  const retractionProgress =
-    effectivePhase === 'retracting'
-      ? prefersReducedMotion
-        ? 0
-        : 1
-      : 0;
-  const innerScale = 1 - 0.15 * retractionProgress;
+  // During retraction, the fog's radial gradient inverts: instead of being
+  // transparent at the center and dark at the edges, it becomes dark and
+  // concentrated at the center, fading to nothing at the edges. This combined
+  // with the clipPath shrinking gives a clear "the fog is condensing back into
+  // the origin capsule" visual. The transform also scales the entire fog
+  // toward the origin point so the motion is unmistakable.
+  const isRetracting = effectivePhase === 'retracting' && !prefersReducedMotion;
+  const fogBackground = isRetracting
+    ? `radial-gradient(circle at ${geometry.x}px ${geometry.y}px, rgba(0,5,4,1) 0%, rgba(0,12,9,0.99) 28%, rgba(2,44,34,0.92) 58%, rgba(148,163,184,0.16) 88%, rgba(0,0,0,0) 100%)`
+    : `radial-gradient(circle at ${geometry.x}px ${geometry.y}px, rgba(148,163,184,0.16) 0%, rgba(2,44,34,0.92) 30%, rgba(0,12,9,0.99) 72%, rgba(0,5,4,1) 100%)`;
 
   return (
     <motion.div
@@ -174,17 +173,23 @@ function DoctorDoomFogInner({
       data-origin-x={geometry.x.toFixed(2)}
       data-origin-y={geometry.y.toFixed(2)}
       className="fixed inset-0 z-100 pointer-events-none overflow-hidden"
+      style={{
+        transformOrigin: `${geometry.x}px ${geometry.y}px`,
+      }}
       initial={{
         clipPath: collapsedClip,
         opacity: prefersReducedMotion ? 0 : 1,
+        scale: 1,
       }}
       animate={{
         clipPath: effectivePhase === 'retracting' ? collapsedClip : expandedClip,
         opacity: effectivePhase === 'retracting' && prefersReducedMotion ? 0 : 1,
+        scale: effectivePhase === 'retracting' ? 0.3 : 1,
       }}
       exit={{
         clipPath: collapsedClip,
         opacity: 0,
+        scale: 0.1,
       }}
       transition={{
         clipPath: {
@@ -192,15 +197,16 @@ function DoctorDoomFogInner({
           ease: 'easeInOut',
         },
         opacity: { duration: REDUCED_MOTION_MS / 1000 },
+        scale: {
+          duration: (effectivePhase === 'retracting' ? retractDuration : expandDuration) / 1000,
+          ease: 'easeInOut',
+        },
       }}
     >
       <div
         className="absolute inset-0 backdrop-blur-[32px] backdrop-brightness-50"
         style={{
-          background: `radial-gradient(circle at ${geometry.x}px ${geometry.y}px, rgba(148,163,184,0.16) 0%, rgba(2,44,34,0.92) 30%, rgba(0,12,9,0.99) 72%, rgba(0,5,4,1) 100%)`,
-          transformOrigin: `${geometry.x}px ${geometry.y}px`,
-          transform: `scale(${innerScale})`,
-          transition: `transform ${retractDuration / 1000}s easeInOut`,
+          background: fogBackground,
         }}
       />
       <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(0,0,0,0.48)_0%,rgba(6,78,59,0.18)_42%,rgba(0,0,0,0.58)_100%)]" />
