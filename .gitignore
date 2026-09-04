@@ -54,9 +54,11 @@ next-env.d.ts
 /scripts/*.ps1
 /scripts/*.bat
 
-# one-off debug scripts used to investigate past bugs. Keep `test-doctor-doom.mjs`
-# and `smoke-doctor-doom.mjs` (and other intentional scripts) tracked by
-# listing them explicitly below.
+# one-off debug scripts used to investigate past bugs. Keep
+# `smoke-doctor-doom.mjs` and `preview-doctor-doom.mjs` tracked as
+# regression smokes; ignore the rest.
+!/scripts/smoke-doctor-doom.mjs
+!/scripts/preview-doctor-doom.mjs
 /scripts/amethyst-shards.svg
 /scripts/apply-doom-v2.mjs
 /scripts/build.bat
@@ -67,7 +69,6 @@ next-env.d.ts
 /scripts/fix-*.ps1
 /scripts/generate-amethyst-shards.mjs
 /scripts/launch-dev.mjs
-/scripts/preview-*.mjs
 /scripts/remove-shards.mjs
 /scripts/replace-*.mjs
 /scripts/replace-*.ps1
@@ -77,4 +78,5 @@ next-env.d.ts
 /scripts/start-dev.bat
 /scripts/start-prod.bat
 /scripts/tag-count.mjs
+/scripts/test-doctor-doom.mjs
 /scripts/test-language-switch*.mjs
