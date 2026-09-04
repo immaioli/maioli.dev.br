@@ -12,6 +12,7 @@
 # playwright artifacts
 /playwright-report/
 /test-results/
+/screenshots/
 
 # next.js
 /.next/
@@ -30,6 +31,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
+# ad-hoc local logs and dev-server artifacts
+*.log
+*.err
+dev-server.pid
+gitstatus.txt
+
 # local env files
 .env*.local
 
@@ -42,3 +49,42 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# transient logs (dev, build, preview, lint, e2e, playwright, smoke, test, prod)
+*.log
+!scripts/**/*.log
+
+# transient dev server artifacts
+dev-server.pid
+
+# screenshots (Playwright captures)
+screenshots/
+
+# Windows-only helper scripts (per-user launch helpers, not part of the app)
+/scripts/*.ps1
+/scripts/*.bat
+
+# one-off debug scripts used to investigate past bugs. Keep `test-doctor-doom.mjs`
+# and `smoke-doctor-doom.mjs` (and other intentional scripts) tracked by
+# listing them explicitly below.
+/scripts/amethyst-shards.svg
+/scripts/apply-doom-v2.mjs
+/scripts/build.bat
+/scripts/debug-*.mjs
+/scripts/dump-*.mjs
+/scripts/find-*.mjs
+/scripts/fix-*.mjs
+/scripts/fix-*.ps1
+/scripts/generate-amethyst-shards.mjs
+/scripts/launch-dev.mjs
+/scripts/preview-*.mjs
+/scripts/remove-shards.mjs
+/scripts/replace-*.mjs
+/scripts/replace-*.ps1
+/scripts/run-dev-detached.ps1
+/scripts/serve.mjs
+/scripts/start-and-preview.mjs
+/scripts/start-dev.bat
+/scripts/start-prod.bat
+/scripts/tag-count.mjs
+/scripts/test-language-switch*.mjs
