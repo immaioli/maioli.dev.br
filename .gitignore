@@ -50,16 +50,6 @@ gitstatus.txt
 *.tsbuildinfo
 next-env.d.ts
 
-# transient logs (dev, build, preview, lint, e2e, playwright, smoke, test, prod)
-*.log
-!scripts/**/*.log
-
-# transient dev server artifacts
-dev-server.pid
-
-# screenshots (Playwright captures)
-screenshots/
-
 # Windows-only helper scripts (per-user launch helpers, not part of the app)
 /scripts/*.ps1
 /scripts/*.bat
