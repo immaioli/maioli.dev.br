@@ -1,8 +1,10 @@
 'use client';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { ThemeConfig } from '../lib/themes';
 import type { ChaosEventDetail } from '../lib/chaosEvents';
 import { heroNameFont } from '../app/fonts';
-import { ThanosSnapTarget } from './effects/ChaosEngine';
+import { ThanosSnapTarget, ChaosEventEmitter } from './effects/ChaosEngine';
 
 type ThemeButtonProps = {
   theme: ThemeConfig;
@@ -55,6 +57,16 @@ export default function ThemeButton({ theme, isActive, chaosActive, label, disab
   const isThanosOrLoki = theme.id === 'thanos' || theme.id === 'loki';
   const isVillain = isThanosOrLoki || theme.id === 'doctor-doom' || theme.id === 'magneto';
   const isUniverse = theme.id === 'universe';
+  const isDoctorDoom = theme.id === 'doctor-doom';
+  const [pulseKey, setPulseKey] = useState(0);
+
+  useEffect(() => {
+    return ChaosEventEmitter.subscribe((type) => {
+      if (type === 'universe') {
+        setPulseKey((key) => key + 1);
+      }
+    });
+  }, []);
 
   const textColor = getHighestContrastMonochrome(theme.primary);
   const activeIndicatorColor = getActiveIndicatorColor(theme);
@@ -152,6 +164,25 @@ export default function ThemeButton({ theme, isActive, chaosActive, label, disab
         >
           ✓
         </span>
+
+        <AnimatePresence>
+          {isDoctorDoom && isActive && pulseKey > 0 && (
+            <motion.span
+              key={pulseKey}
+              data-theme-return-pulse="true"
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 z-0 rounded-full"
+              style={{
+                boxShadow: '0 0 0 2px rgba(180,255,220,0.85), 0 0 18px rgba(180,255,220,0.55)',
+                background: 'radial-gradient(circle at center, rgba(180,255,220,0.35) 0%, rgba(180,255,220,0) 70%)',
+              }}
+              initial={{ opacity: 0.85, scale: 1 }}
+              animate={{ opacity: 0, scale: 1.9 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: 'easeOut' }}
+            />
+          )}
+      </AnimatePresence>
       </button>
     </ThanosSnapTarget>
   );

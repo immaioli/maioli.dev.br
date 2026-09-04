@@ -37,9 +37,13 @@ test.describe('Chaos Engine effects', () => {
 
       await expect(fog).toHaveAttribute('data-phase', 'counting', { timeout: 7000 });
       await expect(page.getByTestId('doctor-doom-message')).toHaveText(message);
-      await expect(page.getByTestId('doctor-doom-countdown')).toHaveText('3');
-      await expect(page.getByTestId('doctor-doom-countdown')).toHaveText('2', { timeout: 2500 });
+      await expect(page.getByTestId('doctor-doom-countdown')).toHaveText('2');
       await expect(page.getByTestId('doctor-doom-countdown')).toHaveText('1', { timeout: 2500 });
+      await expect(fog).toHaveAttribute('data-phase', 'retracting', { timeout: 3500 });
+      // Vortex is the new visual that replaces the broken-glass crack SVG.
+      // It appears during retract and is clipped away by the parent's
+      // shrinking clipPath as the energy collapses back into the capsule.
+      await expect(page.getByTestId('doctor-doom-vortex')).toBeVisible();
       await expect(fog).toBeHidden({ timeout: 4500 });
       expect(runtimeErrors).toEqual([]);
     });
