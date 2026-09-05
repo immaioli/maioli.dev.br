@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { THEMES } from '../lib/themes';
 import type { ChaosEventDetail } from '../lib/chaosEvents';
 import type { Dictionary } from '../i18n/dictionaries';
-import { ChaosEventEmitter } from './effects/ChaosEngine';
+import { ChaosEventEmitter, ThanosSnapTarget } from './effects/ChaosEngine';
 import { useChaosEngine } from '../hooks/useChaosEngine';
 import ThemeButton from './ThemeButton';
 
@@ -76,18 +76,28 @@ export default function ThemeSwitcher({ dict }: { dict: Dictionary }) {
   const chaosActive = chaosState !== 'normal';
 
   return (
-    <div className="relative z-50 flex flex-row items-center justify-center flex-wrap gap-1.5 md:gap-2 w-full">
-      {THEMES.map((theme) => (
-        <ThemeButton
-          key={theme.id}
-          theme={theme}
-          isActive={currentTheme === theme.id}
-          chaosActive={chaosActive}
-          disabled={theme.id === 'doctor-doom' && chaosState === 'doctor-doom'}
-          label={dict.themes[theme.name as keyof typeof dict.themes]}
-          onClick={changeTheme}
-        />
-      ))}
+    <div className="relative z-50 flex flex-col items-center justify-center w-full">
+      <ThanosSnapTarget>
+        <span
+          className="mb-3 text-xs md:text-sm uppercase tracking-[0.18em] text-white/70 font-medium select-none"
+          aria-label={dict.themes.chooseCapsule}
+        >
+          {dict.themes.chooseCapsule}
+        </span>
+      </ThanosSnapTarget>
+      <div className="flex flex-row items-center justify-center flex-wrap gap-1.5 md:gap-2 w-full">
+        {THEMES.map((theme) => (
+          <ThemeButton
+            key={theme.id}
+            theme={theme}
+            isActive={currentTheme === theme.id}
+            chaosActive={chaosActive}
+            disabled={theme.id === 'doctor-doom' && chaosState === 'doctor-doom'}
+            label={dict.themes[theme.name as keyof typeof dict.themes]}
+            onClick={changeTheme}
+          />
+        ))}
+      </div>
     </div>
   );
 }

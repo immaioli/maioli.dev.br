@@ -5,22 +5,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { doctorDoomFont, heroNameFont } from '../../app/fonts';
 import { ChaosEventEmitter, type ChaosEventDetail } from '../../lib/chaosEvents';
 
-// Total cycle budget: 2.0s expand + 3.0s message + 1.0s gap +
-// (4 ticks × 0.8s + 0.35s hold) + 0.14s crack + 2.0s retract ≈ 11.7s end-to-end.
+// Total cycle budget: 3.0s expand + 3.0s message + 1.0s gap +
+// (4 ticks × 1.0s + 1.0s hold) + 0.14s crack + 3.0s retract ≈ 15.14s end-to-end.
 //
 // Phase timeline (data-phase attribute exposed for tests):
-//   'expanding'  : fog circle expanding from capsule origin
+//   'expanding'  : fog circle expanding from capsule origin (FOG_EXPAND_MS)
 //   'message'    : only the "Esse é o fim?" text, MESSAGE_DURATION_MS long
 //   'gap'        : clean fog screen for MESSAGE_GAP_MS, dramatic breath before countdown
 //   'counting'   : numbers 3 → 2 → 1 → 0, each visible for COUNTDOWN_STEP_MS
 //   'cracking'   : brief 140ms visual impact on the fog (scale 1.04 shock)
-//   'retracting' : fog + vortex collapse back into the capsule
+//   'retracting' : fog + vortex collapse back into the capsule (FOG_RETRACT_MS)
 //
 // Adjusting one constant scales only that phase; the countdown schedule
 // derives from COUNTDOWN_STEP_MS so adding or removing a tick keeps the
 // per-number cadence steady instead of packing numbers into a fixed window.
-const FOG_EXPAND_MS = 2000;
-const FOG_RETRACT_MS = 2000;
+const FOG_EXPAND_MS = 3000;
+const FOG_RETRACT_MS = 3000;
 // How long the message "Esse é o fim?" sits on screen alone (no countdown).
 // User feedback round 2: the message should be readable, then disappear.
 const MESSAGE_DURATION_MS = 3000;
@@ -31,10 +31,11 @@ const COUNTDOWN_FROM = 3;
 const COUNTDOWN_TO = 0;
 // Number of ticks including the final 0 (3,2,1,0 → 4 values).
 const COUNTDOWN_TICKS = COUNTDOWN_FROM - COUNTDOWN_TO + 1;
-const COUNTDOWN_STEP_MS = 800;
-// Hold the final countdown tick ("0") briefly so the user actually sees it
-// before the message and countdown unmount on the crack transition.
-const COUNTDOWN_FINAL_HOLD_MS = 350;
+const COUNTDOWN_STEP_MS = 1000;
+// Hold the final countdown tick ("0") for 1 second so the user actually sees it
+// AND to provide a deliberate 1s beat between "0" and the vortex impact.
+// User feedback round 3: 1s gap between zero and the vortex is required.
+const COUNTDOWN_FINAL_HOLD_MS = 1000;
 const REDUCED_MOTION_MS = 250;
 // Brief visual impact moment between countdown end and retract start.
 // Kept short on purpose — the user requested no hold; the vortex collapses
@@ -224,7 +225,16 @@ function DoctorDoomFogInner({
     if (effectivePhase !== 'retracting') return;
 
     const frame = window.requestAnimationFrame(() => setGeometry(getFogGeometry(run)));
-    const timer = window.setTimeout(onDone, retractDuration);
+    // Use a ref-guarded timer so the dismiss() callback fires exactly once
+    // after FOG_RETRACT_MS, regardless of how many times this effect re-runs
+    // during the retract phase (e.g. due to setGeometry-driven re-renders
+    // or any other dep that could otherwise reset the timeout).
+    const dismissRef = { called: false };
+    const timer = window.setTimeout(() => {
+      if (dismissRef.called) return;
+      dismissRef.called = true;
+      onDone();
+    }, retractDuration);
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(timer);
@@ -302,7 +312,7 @@ function DoctorDoomFogInner({
               : expandDuration) / 1000,
           ease: 'easeInOut',
         },
-        opacity: { duration: REDUCED_MOTION_MS / 1000 },
+        opacity: { duration: 0.4 },
       }}
     >
       <div
@@ -320,7 +330,14 @@ function DoctorDoomFogInner({
           is "sucked back" into the capsule as the parent's clipPath shrinks
           to circle(0) at the origin point. */}
 
-      {effectivePhase === 'retracting' && (
+      {/* Galactic vortex: mounted during the impact beat ('cracking') and the
+          collapsing retract ('retracting'). The previous gate ('retracting'
+          only) made the vortex effectively invisible because by the time it
+          mounted the parent's clipPath was already shrinking toward circle(0).
+          Now we mount earlier (cracking) so the user actually sees the spiral
+          while the clipPath is still wide open, and the in-prop 'phase' lets
+          the vortex fade out cleanly before the clipPath fully closes. */}
+      {(effectivePhase === 'cracking' || effectivePhase === 'retracting') && (
         <DoctorDoomVortex
           phase={effectivePhase}
           origin={geometry}
@@ -337,38 +354,51 @@ function DoctorDoomFogInner({
             exit={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.97 }}
             transition={{ duration: prefersReducedMotion ? 0.2 : 0.6, ease: 'easeOut' }}
           >
-            {messageVisible && (
-            <h2
-              data-testid="doctor-doom-message"
-              className={`${heroNameFont.className} uppercase tracking-[0.08em] text-white leading-none font-semibold`}
-              style={{
-                fontSize: 'clamp(2.2rem, 5.2vw, 4.375rem)',
-                textShadow: '0 0 32px rgba(20,30,40,0.55), 0 0 64px rgba(5,80,60,0.35)',
-              }}
-            >
-              {message}
-            </h2>
-            )}
+            <AnimatePresence>
+              {messageVisible && (
+                <motion.h2
+                  key="doctor-doom-message"
+                  data-testid="doctor-doom-message"
+                  className={`${heroNameFont.className} uppercase tracking-[0.08em] text-white leading-none font-semibold`}
+                  style={{
+                    fontSize: 'clamp(2.2rem, 5.2vw, 4.375rem)',
+                    textShadow: '0 0 32px rgba(20,30,40,0.55), 0 0 64px rgba(5,80,60,0.35)',
+                  }}
+                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12, scale: prefersReducedMotion ? 1 : 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: prefersReducedMotion ? 0 : -12, scale: prefersReducedMotion ? 1 : 0.96 }}
+                  transition={{ duration: prefersReducedMotion ? 0.2 : 0.55, ease: 'easeOut' }}
+                >
+                  {message}
+                </motion.h2>
+              )}
+            </AnimatePresence>
             {/* Countdown is gated by countdownVisible so it can outlive the message:
-                the container stays mounted across message -> gap -> counting,
-                the message unmounts during "gap", and the countdown mounts
-                on the first tick of the "counting" phase. */}
-            {countdownVisible && (
-              <motion.div
-                key={countdown}
-                data-testid="doctor-doom-countdown"
-                className={`${heroNameFont.className} text-white leading-none font-semibold`}
-                style={{
-                  fontSize: 'clamp(6rem, 22vw, 18.75rem)',
-                  textShadow: '0 0 48px rgba(20,30,40,0.65), 0 0 96px rgba(5,80,60,0.45)',
-                }}
-                initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.7 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: prefersReducedMotion ? 0.15 : 0.4, ease: 'easeOut' }}
-              >
-                {countdown}
-            </motion.div>
-            )}
+                the message unmounts during "gap", and the countdown mounts on
+                the first tick of the "counting" phase. mode="wait" ensures the
+                outgoing tick fully fades out before the next tick fades in, so
+                each number reads as a deliberate beat instead of a glitch. */}
+            <AnimatePresence mode="wait">
+              {countdownVisible && (
+                <motion.div
+                  key={countdown}
+                  data-testid="doctor-doom-countdown"
+                  className={`${heroNameFont.className} text-white leading-none font-semibold`}
+                  style={{
+                    fontSize: 'clamp(6rem, 22vw, 18.75rem)',
+                    textShadow: '0 0 48px rgba(20,30,40,0.65), 0 0 96px rgba(5,80,60,0.45)',
+                  }}
+                  initial={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.7 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: prefersReducedMotion ? 1 : 0.85 }}
+                  // Per-tick fade kept short (~0.25s) so each number stays
+                  // readable for most of the 1s COUNTDOWN_STEP_MS window.
+                  transition={{ duration: prefersReducedMotion ? 0.15 : 0.25, ease: 'easeOut' }}
+                >
+                  {countdown}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
@@ -419,17 +449,21 @@ function DoctorDoomVortex({
   // 5 rings * 8-16 particles each = 60 particles total (cheap for SVG).
   const rings = buildVortexRings();
 
-  // The parent's clipPath + scale animation already handles the
-  // "vortex sucked back into capsule" visual (clipPath shrinks to
-  // circle(0) at the origin point while scale drops to 0.12). Keeping
-  // the vortex at full opacity during retract lets the parent's own
-  // animation reveal the collapse naturally — no separate fade needed.
+  // 'cracking' is the impact beat: the vortex fades in quickly so the user
+  // can read the spiral before the parent clipPath starts shrinking.
+  // 'retracting' is the collapse: the vortex fades out gracefully while the
+  // parent clipPath closes — the prior implementation kept the vortex at
+  // opacity 1 the whole time, which combined with the shrinking clipPath
+  // made the spiral effectively invisible (clipped away before the user
+  // could register it).
   //
-  // Reduced motion: show the vortex statically at opacity 0.85, no scale
-  // change. The parent still clips it away when fog retracts.
-  const collapseScale = isRetracting ? 1 : 1;
-  const targetOpacity = reducedMotion ? 0.85 : 1;
-  const enterDuration = reducedMotion ? 0.2 : 0.25;
+  // Reduced motion: show the vortex statically at opacity 0.85, no fade.
+  const targetOpacity = reducedMotion ? 0.85 : isRetracting ? 0 : 1;
+  const targetScale = reducedMotion ? 1 : isRetracting ? 0.55 : 1;
+  // Vortex collapse fades out over the same window as the parent fog retract
+  // (FOG_RETRACT_MS = 3s) so the spiral "sinks into" the capsule in sync with
+  // the clipPath closing. Quick fade-in (~250ms) keeps the impact beat punchy.
+  const enterDuration = reducedMotion ? 0.2 : isRetracting ? 3 : 0.25;
 
   return (
     <motion.div
@@ -440,7 +474,7 @@ function DoctorDoomVortex({
       initial={reducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
       animate={{
         opacity: targetOpacity,
-        scale: collapseScale,
+        scale: targetScale,
       }}
       exit={{ opacity: 0, scale: 0.4 }}
       transition={{

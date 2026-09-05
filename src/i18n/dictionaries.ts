@@ -8,6 +8,7 @@ const dictionaries = {
     altLogo: 'Logo maioli.dev',
     themes: {
       label: 'E se o tema fosse...',
+      chooseCapsule: 'Escolha uma capsula',
       universo: 'Universo',
       spiderMan: 'Homem-Aranha',
       ironMan: 'Homem de Ferro',
@@ -64,6 +65,7 @@ const dictionaries = {
     altLogo: 'maioli.dev logo',
     themes: {
       label: 'What if the theme was...',
+      chooseCapsule: 'Choose a capsule',
       universo: 'Universe',
       spiderMan: 'Spider-Man',
       ironMan: 'Iron Man',
@@ -120,6 +122,7 @@ const dictionaries = {
     altLogo: 'Logo de maioli.dev',
     themes: {
       label: '¿Y si el tema fuera...',
+      chooseCapsule: 'Elige una capsula',
       universo: 'Universo',
       spiderMan: 'Spider-Man',
       ironMan: 'Iron Man',
